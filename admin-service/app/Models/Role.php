@@ -7,6 +7,7 @@ use \Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
+    protected $table = 'roles';
     protected $fillable = [
         'name', 
         'label'

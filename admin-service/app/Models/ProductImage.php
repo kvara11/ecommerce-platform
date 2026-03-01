@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProductImage extends Model
 {
     use HasFactory;
-    
+
+    protected $table = 'product_images';
+
     protected $fillable = [
         'product_id',
         'url',

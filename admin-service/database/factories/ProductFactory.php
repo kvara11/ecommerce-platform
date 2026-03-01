@@ -5,9 +5,12 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Category;
+use App\Models\Product;
 
 class ProductFactory extends Factory
 {
+    protected $model = Product::class;
+
     public function definition(): array
     {
         $name = fake()->unique()->words(3, true);

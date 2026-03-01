@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Inventory;
 
 class ProductSeeder extends Seeder
 {
@@ -17,16 +18,23 @@ class ProductSeeder extends Seeder
             ->count(50)
             ->create()
             ->each(function ($product) {
+
+                Inventory::factory()->create([
+                    'product_id' => $product->id,
+                ]);
+
                 ProductImage::factory()->create([
                     'product_id' => $product->id,
-                    'url' => fake()->imageUrl(640, 480, 'products'),
                     'is_main' => true,
                     'sort_order' => 0,
                 ]);
 
                 ProductImage::factory()
                     ->count(fake()->numberBetween(2, 4))
-                    ->create();
+                    ->create([
+                        'product_id' => $product->id,
+                        'is_main' => false,
+                    ]);
             });
     }
 }
