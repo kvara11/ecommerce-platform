@@ -42,6 +42,11 @@ class Product extends Model
         return $query->where('is_active', true);
     }
 
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
     public function getSeoTitleAttribute(): string
     {
         return $this->meta_title ?: $this->name;
