@@ -8,6 +8,7 @@ services:
       APP_DEBUG: "true"
     volumes:
       - ./admin-service:/var/www/admin-service
+      - admin-build:/var/www/admin-service/public/build
 
   api-gateway:
     build:
@@ -22,3 +23,7 @@ services:
   nginx:
     volumes:
       - ./admin-service:/var/www/admin-service:ro
+      - admin-build:/var/www/admin-service/public/build:ro
+
+volumes:
+  admin-build:
