@@ -1,25 +1,17 @@
 #!/bin/sh
 set -e
 
-echo "🚀 Starting admin-service..."
+cd /var/www/admin-service
 
-# PHP deps
-if [ ! -d "vendor" ]; then
-  echo "📦 Installing composer dependencies..."
-  composer install --no-interaction --prefer-dist --optimize-autoloader
+if [ "$(id -u)" = "0" ]; then
+  mkdir -p storage bootstrap/cache
+  chown -R www-data:www-data storage bootstrap/cache
 fi
 
-# Frontend deps
-if [ ! -d "node_modules" ]; then
-  echo "📦 Installing npm dependencies..."
-  npm install
+if [ "${APP_ENV}" = "production" ]; then
+  php artisan config:cache || true
+  php artisan route:cache || true
+  php artisan view:cache || true
 fi
 
-# Vite build (only if manifest missing)
-if [ ! -f "public/build/manifest.json" ]; then
-  echo "🎨 Building Vite assets..."
-  npm run build
-fi
-
-echo "✅ Ready. Starting PHP-FPM..."
 exec php-fpm

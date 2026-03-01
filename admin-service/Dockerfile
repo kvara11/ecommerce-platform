@@ -35,10 +35,12 @@ COPY . .
 
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
+RUN npm install && \
+    npm run build && \
+    rm -rf node_modules
+
 RUN mkdir -p storage bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache
-
-USER www-data
 
 EXPOSE 9000
 CMD ["/entrypoint.sh"]
