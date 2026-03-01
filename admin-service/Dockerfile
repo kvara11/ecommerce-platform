@@ -11,6 +11,7 @@ RUN apk add --no-cache \
     curl-dev \
     openssl-dev \
     pkgconf \
+    nodejs npm \
     $PHPIZE_DEPS
 
 RUN docker-php-ext-install \
@@ -27,11 +28,17 @@ RUN docker-php-ext-install \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 COPY . .
+
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 RUN mkdir -p storage bootstrap/cache && \
     chown -R www-data:www-data storage bootstrap/cache
 
-EXPOSE 9000
+USER www-data
 
-CMD ["php-fpm"]
+EXPOSE 9000
+CMD ["/entrypoint.sh"]
