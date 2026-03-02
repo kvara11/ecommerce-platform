@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
@@ -36,7 +38,7 @@ class Product extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
     public function getActives($query)
@@ -44,14 +46,14 @@ class Product extends Model
         return $query->where('is_active', true);
     }
 
-    public function images()
+    public function images(): HasMany
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, 'product_id', 'id');
     }
 
-    public function inventory()
+    public function inventory(): HasOne
     {
-        return $this->hasOne(Inventory::class);
+        return $this->hasOne(Inventory::class, 'product_id', 'id');
     }
 
     public function getSeoTitleAttribute(): string

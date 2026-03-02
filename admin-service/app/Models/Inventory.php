@@ -29,7 +29,7 @@ class Inventory extends Model
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 
     public function getAvailableQuantityAttribute(): int

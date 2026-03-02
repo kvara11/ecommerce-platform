@@ -33,22 +33,22 @@ class Order extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function status(): BelongsTo
     {
-        return $this->belongsTo(OrderStatus::class);
+        return $this->belongsTo(OrderStatus::class, 'status_id', 'id');
     }
 
     public function paymentStatus(): BelongsTo
     {
-        return $this->belongsTo(PaymentStatus::class);
+        return $this->belongsTo(PaymentStatus::class, 'payment_status_id', 'id');
     }
 
     public function paymentMethod(): BelongsTo
     {
-        return $this->belongsTo(PaymentMethods::class);
+        return $this->belongsTo(PaymentMethods::class, 'payment_method_id', 'id');
     }
 
 
