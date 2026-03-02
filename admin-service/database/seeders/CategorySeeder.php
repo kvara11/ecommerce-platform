@@ -9,7 +9,6 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        // 🔹 Parent categories
         $electronics = Category::updateOrCreate(
             ['slug' => 'electronics'],
             [
