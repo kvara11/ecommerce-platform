@@ -56,6 +56,11 @@ class Product extends Model
         return $this->hasOne(Inventory::class, 'product_id', 'id');
     }
 
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'product_id', 'id');
+    }
+
     public function getSeoTitleAttribute(): string
     {
         return $this->meta_title ?: $this->name;

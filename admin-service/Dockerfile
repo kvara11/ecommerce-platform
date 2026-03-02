@@ -12,7 +12,10 @@ RUN apk add --no-cache \
     openssl-dev \
     pkgconf \
     nodejs npm \
+    autoconf g++ make \
     $PHPIZE_DEPS
+
+RUN pecl install redis && docker-php-ext-enable redis
 
 RUN docker-php-ext-install \
     pdo \
