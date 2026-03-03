@@ -22,6 +22,8 @@ class InventoryFactory extends Factory
             'product_id' => Product::factory(),
             'quantity' => $quantity,
             'reserved_quantity' => $reserved,
+            'low_stock_threshold' => 10,
+            'last_restocked_at' => fake()->dateTimeThisYear(),
         ];
     }
 }

@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
+    use HasFactory;
     protected $table = 'orders';
+
+    protected $appends = ['status', 'payment_status'];
 
     protected $fillable = [
         'order_number',
@@ -51,5 +55,18 @@ class Order extends Model
         return $this->belongsTo(PaymentMethods::class, 'payment_method_id', 'id');
     }
 
+    public function items(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'order_id', 'id');
+    }
 
+    public function getStatusAttribute(): string
+    {
+        return $this->status->name ?? 'unknown';
+    }
+
+    public function getPaymentStatusAttribute(): string
+    {
+        return $this->paymentStatus->name ?? 'unknown';
+    }
 }

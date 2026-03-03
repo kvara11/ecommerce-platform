@@ -26,9 +26,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
+        'phone',
         'password',
+        'role_id',
+        'is_active',
     ];
 
     /**
@@ -50,6 +54,7 @@ class User extends Authenticatable
      */
     protected $appends = [
         'profile_photo_url',
+        'full_name',
     ];
 
     /**
@@ -62,6 +67,13 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'role_id' => 'integer',
         ];
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
     }
 }
