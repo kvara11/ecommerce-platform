@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('profile_photo_path', 2048)->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['email']);
             $table->index(['role_id']);

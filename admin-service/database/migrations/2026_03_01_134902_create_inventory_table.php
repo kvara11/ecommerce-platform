@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('low_stock_threshold')->default(10);
             $table->timestamp('last_restocked_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->index('product_id');

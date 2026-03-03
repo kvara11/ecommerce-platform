@@ -32,6 +32,7 @@ return new class extends Migration
             $table->timestamp('delivered_at')->nullable();
             $table->timestamp('cancelled_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['order_number', 'user_id', 'status_id', 'payment_status_id']);
         });
