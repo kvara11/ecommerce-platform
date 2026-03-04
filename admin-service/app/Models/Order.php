@@ -13,7 +13,7 @@ class Order extends Model
     use HasFactory, SoftDeletes;
     protected $table = 'orders';
 
-    protected $appends = ['status', 'payment_status'];
+    protected $appends = ['status_name', 'payment_status_name'];
 
     protected $fillable = [
         'order_number',
@@ -61,13 +61,13 @@ class Order extends Model
         return $this->hasMany(OrderItem::class, 'order_id', 'id');
     }
 
-    public function getStatusAttribute(): string
+    public function getStatusNameAttribute(): string
     {
-        return $this->status->name ?? 'unknown';
+        return $this->status->label ?? 'unknown';
     }
 
-    public function getPaymentStatusAttribute(): string
+    public function getPaymentStatusNameAttribute(): string
     {
-        return $this->paymentStatus->name ?? 'unknown';
+        return $this->paymentStatus->label ?? 'unknown';
     }
 }

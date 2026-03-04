@@ -33,5 +33,12 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+
+        // Create 20 additional customers
+        User::factory()->count(20)->create([
+            'role_id' => 2,
+            'is_active' => true,
+            'email_verified_at' => now(),
+        ]);
     }
 }

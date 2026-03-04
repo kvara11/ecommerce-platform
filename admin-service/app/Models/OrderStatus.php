@@ -15,13 +15,13 @@ class OrderStatus extends Model
     ];
 
     public const STATUSES = [
-        0 => 'pending',
-        1 => 'processing',
-        2 => 'confirmed',
-        3 => 'shipped',
-        4 => 'delivered',
-        5 => 'cancelled',
-        6 => 'refunded',
+        1 => 'pending',
+        2 => 'processing',
+        3 => 'confirmed',
+        4 => 'shipped',
+        5 => 'delivered',
+        6 => 'cancelled',
+        7 => 'refunded',
     ];
 
     public function orders(): HasMany

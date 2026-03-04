@@ -12,7 +12,7 @@ const props = defineProps({
             total_products: 0,
             active_products: 0,
             total_customers: 0,
-            low_stock_products: 0
+            low_stock_products: 0,
         })
     },
     recentOrders: {
@@ -64,8 +64,6 @@ const maxRevenue = computed(() => {
                     <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
                         <div class="flex items-center justify-between">
                             <div>
-
-                                {{console.log(metrics)  }}
                                 <p class="text-gray-500 text-sm font-medium">Total Orders</p>
                                 <p class="text-3xl font-bold text-gray-900 mt-2">{{ metrics.total_orders }}</p>
                             </div>
@@ -166,6 +164,7 @@ const maxRevenue = computed(() => {
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- Recent Orders -->
@@ -188,25 +187,23 @@ const maxRevenue = computed(() => {
                             <tbody>
                                 <tr v-for="order in recentOrders" :key="order.id" class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 text-sm font-medium text-gray-900">#{{ order.id }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-600">{{ order.user?.name ?? 'N/A' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">{{ order.user?.full_name ?? 'N/A' }}</td>
                                     <td class="px-6 py-4 text-sm font-semibold text-gray-900">{{ formatCurrency(order.total_amount) }}</td>
                                     <td class="px-6 py-4 text-sm">
                                         <span :class="[
                                             'inline-block px-3 py-1 rounded-full text-xs font-semibold',
-                                            order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                            order.status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                            order.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
-                                        ]">
-                                            {{ order.status.charAt(0).toUpperCase() + order.status.slice(1) }}
+                                                order.status_id === 3 ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                            ]">
+
+                                            {{ order.status_name }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm">
                                         <span :class="[
                                             'inline-block px-3 py-1 rounded-full text-xs font-semibold',
-                                            order.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 
-                                            order.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                                            order.payment_status_id === 2 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                         ]">
-                                            {{ order.payment_status.charAt(0).toUpperCase() + order.payment_status.slice(1) }}
+                                            {{ order.payment_status_name }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(order.created_at) }}</td>

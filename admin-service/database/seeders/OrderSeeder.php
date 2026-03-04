@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\User;
 
 class OrderSeeder extends Seeder
 {
@@ -14,10 +15,15 @@ class OrderSeeder extends Seeder
      */
     public function run(): void
     {
+        $customerIds = User::where('role_id', 2)->pluck('id')->toArray();
+
         Order::factory()
             ->count(50)
             ->create()
-            ->each(function ($order) {
+            ->each(function ($order) use ($customerIds) {
+
+                $order->update(['user_id' => fake()->randomElement($customerIds)]);
+
                 $items = OrderItem::factory()
                     ->count(fake()->numberBetween(1, 5))
                     ->create(['order_id' => $order->id]);

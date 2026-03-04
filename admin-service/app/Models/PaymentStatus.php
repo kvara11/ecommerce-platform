@@ -15,10 +15,10 @@ class PaymentStatus extends Model
     ];
 
     public const STATUSES = [
-        0 => 'pending',
-        1 => 'paid',
-        2 => 'failed',
-        3 => 'refunded',
+        1 => 'pending',
+        2 => 'paid',
+        3 => 'failed',
+        4 => 'refunded',
     ];
 
     public function orders(): HasMany
