@@ -36,6 +36,7 @@ Route::middleware([
     Route::get('/users', [UserViewController::class, 'index'])->name('users.index');
     Route::post('/users', [UserViewController::class, 'store'])->name('users.store');
     Route::put('/users/toggle-status/{user}', [UserViewController::class, 'toggleStatus'])->name('users.toggleStatus');
+    Route::put('/users/{user}', [UserViewController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserViewController::class, 'destroy'])->name('users.destroy');
 
 });

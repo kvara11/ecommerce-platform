@@ -126,64 +126,95 @@
 
         <!-- User Details Modal -->
         <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-96 max-h-[90vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold">User Details</h3>
+                    <h3 class="text-xl font-bold">Edit User</h3>
                     <button @click="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
                 </div>
 
-                <div v-if="selectedUser" class="space-y-3 mb-6">
+                <form v-if="selectedUser" @submit.prevent="submitEditUser" class="space-y-4">
                     <div>
-                        <label class="font-semibold text-gray-700">Name:</label>
-                        <p class="text-gray-600">{{ selectedUser.first_name }} {{ selectedUser.last_name }}</p>
+                        <label class="block font-semibold text-gray-700 mb-1">First Name *</label>
+                        <input
+                            v-model="editForm.first_name"
+                            type="text"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
                     </div>
-                    <div>
-                        <label class="font-semibold text-gray-700">Email:</label>
-                        <p class="text-gray-600">{{ selectedUser.email }}</p>
-                    </div>
-                    <div>
-                        <label class="font-semibold text-gray-700">Phone:</label>
-                        <p class="text-gray-600">{{ selectedUser.phone }}</p>
-                    </div>
-                    <div>
-                        <label class="font-semibold text-gray-700">Role:</label>
-                        <p class="text-gray-600">{{ selectedUser.role?.label || 'N/A' }}</p>
-                    </div>
-                    <div>
-                        <label class="font-semibold text-gray-700">Status:</label>
-                        <p :class="[
-                            selectedUser.is_active ? 'text-green-600' : 'text-red-600'
-                        ]">
-                            {{ selectedUser.is_active ? 'Active' : 'Inactive' }}
-                        </p>
-                    </div>
-                </div>
 
-                <div class="flex gap-3">
-                    <button
-                        @click="toggleUserStatus"
-                        :class="[
-                            'flex-1 px-4 py-2 rounded-lg text-white font-semibold',
-                            selectedUser?.is_active
-                                ? 'bg-yellow-600 hover:bg-yellow-700'
-                                : 'bg-green-600 hover:bg-green-700'
-                        ]"
-                    >
-                        {{ selectedUser?.is_active ? 'Deactivate' : 'Activate' }}
-                    </button>
-                    <button
-                        @click="deleteUser"
-                        class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold"
-                    >
-                        Delete
-                    </button>
-                    <button
-                        @click="closeModal"
-                        class="flex-1 px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-semibold"
-                    >
-                        Close
-                    </button>
-                </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Last Name *</label>
+                        <input
+                            v-model="editForm.last_name"
+                            type="text"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Email *</label>
+                        <input
+                            v-model="editForm.email"
+                            type="email"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Phone</label>
+                        <input
+                            v-model="editForm.phone"
+                            type="tel"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">Role *</label>
+                        <select
+                            v-model.number="editForm.role_id"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        >
+                            <option value="1">Administrator</option>
+                            <option value="2">Customer</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-3 pt-4">
+                        <button
+                            type="submit"
+                            :disabled="isLoading"
+                            class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold disabled:opacity-50"
+                        >
+                            {{ isLoading ? 'Updating...' : 'Update' }}
+                        </button>
+                        <button
+                            type="button"
+                            @click="toggleUserStatus"
+                            :class="[
+                                'flex-1 px-4 py-2 rounded-lg text-white font-semibold',
+                                selectedUser?.is_active
+                                    ? 'bg-yellow-600 hover:bg-yellow-700'
+                                    : 'bg-green-600 hover:bg-green-700'
+                            ]"
+                            :disabled="isLoading"
+                        >
+                            {{ selectedUser?.is_active ? 'Inative' : 'Active' }}
+                        </button>
+                        <button
+                            type="button"
+                            @click="deleteUser"
+                            :disabled="isLoading"
+                            class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold disabled:opacity-50"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -303,6 +334,14 @@ const selectedUser = ref(null);
 const isLoading = ref(false);
 const showCreateModal = ref(false);
 const isCreating = ref(false);
+const editForm = ref({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    role_id: '',
+    is_active: true,
+});
 const formData = ref({
     first_name: '',
     last_name: '',
@@ -369,12 +408,45 @@ const applyFilters = () => {
 
 const openModal = (user) => {
     selectedUser.value = { ...user };
+    editForm.value = {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone: user.phone || '',
+        role_id: user.role?.id || 2,
+        is_active: user.is_active,
+    };
     showModal.value = true;
 };
 
 const closeModal = () => {
     showModal.value = false;
     selectedUser.value = null;
+    editForm.value = {
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        role_id: '',
+        is_active: true,
+    };
+};
+
+const submitEditUser = () => {
+    if (!selectedUser.value || isLoading.value) return;
+    
+    isLoading.value = true;
+    const userId = selectedUser.value.id;
+    
+    router.put(`/users/${userId}`, editForm.value, {
+        preserveScroll: true,
+        onFinish: () => {
+            isLoading.value = false;
+            closeModal();
+
+            router.get(route('users.index'));
+        },
+    });
 };
 
 const toggleUserStatus = () => {
