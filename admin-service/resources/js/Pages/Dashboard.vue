@@ -252,8 +252,8 @@ const maxRevenue = computed(() => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="product in topProducts" :key="product.product_name" class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ product.product_name }}</td>
+                                    <tr v-for="product in topProducts" :key="product.id" class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ product.name }}</td>
                                         <td class="px-6 py-4 text-sm">
                                             <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-lg text-xs font-bold ring-1 ring-blue-200">
                                                 {{ product.total_sold }}

@@ -35,11 +35,12 @@ class DashboardController extends Controller
             ->orderBy('date')
             ->get();
 
-        $topProducts = Product::withCount('orderItems')
-            ->orderBy('order_items_count', 'desc')
+        $topProducts = Product::select('id', 'name')
+            ->withSum('orderItems as total_sold', 'quantity')
+            ->orderByDesc('total_sold')
             ->take(5)
             ->get();
-            
+
         return Inertia::render('Dashboard', [
             'metrics' => $metrics,
             'recentOrders' => $recentOrders,
