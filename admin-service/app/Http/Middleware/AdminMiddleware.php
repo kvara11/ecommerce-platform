@@ -19,11 +19,23 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->check()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.'
+                ], 401);
+            }
             return redirect()->route('login');
         }
 
         // უფრო მეტი დინამიურობისთვის შეგვიძლია როლები redis-ში შევინახოთ და იქიდან წამოვიღოთ
         if (auth()->user()->role_id !== 1) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Admin access required.'
+                ], 403);
+            }
 
             Auth::guard('web')->logout();
             $request->session()->invalidate();

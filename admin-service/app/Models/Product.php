@@ -61,6 +61,11 @@ class Product extends Model
         return $this->hasMany(OrderItem::class, 'product_id', 'id');
     }
 
+    public function getSoldItemsCountAttribute()
+    {
+        return $this->attributes['total_sold'] ?? $this->orderItems()->sum('quantity');
+    }
+
     public function getSeoTitleAttribute(): string
     {
         return $this->meta_title ?: $this->name;
