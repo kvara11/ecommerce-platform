@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
@@ -32,7 +34,21 @@ class UserViewController extends Controller
         ]);
     }
 
-    
+
+    public function store(StoreUserRequest $request)
+    {
+       $this->userService->create($request->all());
+
+        return redirect()->back();
+    }
+
+    public function update(UpdateUserRequest $request, User $user)
+    {
+        $this->userService->update($user, $request->all());
+
+        return redirect()->back();
+    }
+
     public function toggleStatus(Request $request, User $user)
     {
         $this->userService->toggleStatus($user);
@@ -48,11 +64,4 @@ class UserViewController extends Controller
         return redirect()->back();
     }
 
-
-    public function store(Request $request)
-    {
-       $this->userService->create($request->all());
-
-        return redirect()->back();
-    }
 }
