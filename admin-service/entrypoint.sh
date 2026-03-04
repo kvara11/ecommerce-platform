@@ -8,10 +8,6 @@ if [ "$(id -u)" = "0" ]; then
   chown -R www-data:www-data storage bootstrap/cache
 fi
 
-if [ "${APP_ENV}" = "production" ]; then
-  php artisan config:cache || true
-  php artisan route:cache || true
-  php artisan view:cache || true
-fi
+php artisan optimize || true
 
 exec php-fpm
