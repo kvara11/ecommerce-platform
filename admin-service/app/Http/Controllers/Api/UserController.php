@@ -13,42 +13,30 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of users.
-     */
     public function index(Request $request)
     {
         $query = User::with('role');
 
-        // Search
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
-            });
+            $query->where(
+                fn($q) => $q
+                    ->where('first_name', 'like', "%$search%")
+                    ->orWhere('last_name',  'like', "%$search%")
+                    ->orWhere('email',      'like', "%$search%")
+                    ->orWhere('phone',      'like', "%$search%")
+            );
         }
 
-        // Filter by role
-        if ($request->has('role_id')) {
+        if ($request->filled('role_id')) {
             $query->where('role_id', $request->role_id);
         }
 
-        // Filter by status
         if ($request->has('is_active')) {
             $query->where('is_active', $request->is_active);
         }
 
-        // Sorting
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-        $query->orderBy($sortBy, $sortOrder);
-
-        // Pagination
-        $perPage = $request->get('per_page', 15);
-        $users = $query->paginate($perPage);
+        $users = $query->latest()->paginate(15);
 
         return new UserCollection($users);
     }
@@ -75,7 +63,7 @@ class UserController extends Controller
         ], 201);
     }
 
-    
+
     public function show($id)
     {
         $user = User::with('role')->find($id);
@@ -93,9 +81,7 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified user.
-     */
+
     public function update(UpdateUserRequest $request, $id)
     {
         $user = User::find($id);
@@ -123,9 +109,7 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified user.
-     */
+
     public function destroy($id)
     {
         $user = User::find($id);
