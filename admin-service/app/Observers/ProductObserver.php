@@ -12,6 +12,10 @@ class ProductObserver
     {
         $this->syncToNestJs($product, 'saved');
     }
+    public function updated(Product $product): void
+    {
+        $this->syncToNestJs($product, 'updated');
+    }
 
     public function deleted(Product $product): void
     {
@@ -21,8 +25,9 @@ class ProductObserver
     private function syncToNestJs(Product $product, string $action): void
     {
         try {
-            $syncUrl = config('services.nestjs.sync_url', 'http://api-gateway:3000/api/webhooks/sync');
-            $syncKey = config('services.nestjs.sync_key', env('SYNC_KEY'));
+
+            $syncUrl = config('services.nestjs.sync_url');
+            $syncKey = config('services.nestjs.sync_key');
 
             if (empty($syncKey)) {
                 Log::warning('SYNC_KEY is not configured. Product sync skipped.', [
