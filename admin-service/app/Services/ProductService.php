@@ -61,12 +61,10 @@ class ProductService
         $product = Product::create($payload);
 
 
-        // Handle image upload
         if (!empty($data['image'])) {
             $this->uploadImage($product, $data['image']);
         }
 
-        // Create inventory record
         if (!empty($data['quantity'])) {
             Inventory::create([
                 'product_id' => $product->id,
@@ -86,24 +84,20 @@ class ProductService
             'cost_price', 'is_active', 'meta_title', 'meta_description', 'meta_keywords'
         ])->toArray();
 
-        // Update slug if name changed
         if (!empty($data['name']) && $data['name'] !== $product->name) {
             $payload['slug'] = Str::slug($data['name']);
         }
 
-        // Update SKU if provided
         if (!empty($data['sku'])) {
             $payload['sku'] = $data['sku'];
         }
 
         $product->update($payload);
 
-        // Handle image upload
         if (!empty($data['image'])) {
             $this->uploadImage($product, $data['image']);
         }
 
-        // Update inventory quantity
         if (isset($data['quantity'])) {
             $inventory = $product->inventory ?? new Inventory(['product_id' => $product->id]);
             $inventory->quantity = $data['quantity'];
@@ -116,19 +110,16 @@ class ProductService
 
     public function delete(Product $product): void
     {
-        // Delete images
         if ($product->images) {
             foreach ($product->images as $image) {
                 $this->deleteImage($image);
             }
         }
 
-        // Delete inventory
         if ($product->inventory) {
             $product->inventory->delete();
         }
 
-        // Soft delete product
         $product->delete();
     }
 
@@ -144,7 +135,6 @@ class ProductService
     {
         $sku = Str::upper(Str::substr(Str::slug($name), 0, 3)) . '-' . time();
         
-        // Ensure uniqueness
         while (Product::where('sku', $sku)->exists()) {
             $sku = Str::upper(Str::substr(Str::slug($name), 0, 3)) . '-' . time();
         }
@@ -201,7 +191,7 @@ class ProductService
         if(str_contains($imagePath, 'http')) {
             return $imagePath;
         }
-        
+
         if ($imagePath) {
             return Storage::url($imagePath);
         }
