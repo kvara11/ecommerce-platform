@@ -1,18 +1,38 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
+import { createKeyv } from '@keyv/redis';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { RefreshTokenEntity } from './auth/entities/refresh-token.entity';
 import { UsersModule } from './users/users.module';
+import { ProductsModule } from './products/products.module';
+import { OrdersModule } from './orders/orders.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
+import { ProductEntity } from './products/entities/product.entity';
+import { OrderEntity } from './orders/entities/order.entity';
+import { RoleEntity } from './users/entities/role.entity';
 import { UserEntity } from './users/entities/user.entity';
 import { AutoRefreshJwtInterceptor } from './common/interceptors/auto-refresh-jwt.interceptor';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: () => ({
+        ttl: Number(process.env.CACHE_TTL_SECONDS ?? 600) * 1000,
+        stores: [
+          createKeyv(
+            `redis://${process.env.REDIS_HOST ?? 'localhost'}:${Number(process.env.REDIS_PORT ?? 6379)}`,
+          ),
+        ],
+      }),
+    }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST ?? 'localhost',
@@ -22,11 +42,18 @@ import { AutoRefreshJwtInterceptor } from './common/interceptors/auto-refresh-jw
       database: process.env.DB_DATABASE,
       entities: [
         UserEntity,
+        RoleEntity,
+        RefreshTokenEntity,
+        ProductEntity,
+        OrderEntity,
       ],
       synchronize: false,
     }),
     UsersModule,
     AuthModule,
+    ProductsModule,
+    OrdersModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [
@@ -37,4 +64,4 @@ import { AutoRefreshJwtInterceptor } from './common/interceptors/auto-refresh-jw
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
