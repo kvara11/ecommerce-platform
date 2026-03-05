@@ -29,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('admin', function (Request $request) {
             return Limit::perMinute(100)->by($request->user()?->id ?: $request->ip());
         });
+
+        \App\Models\Product::observe(\App\Observers\ProductObserver::class);
         
     }
 }
