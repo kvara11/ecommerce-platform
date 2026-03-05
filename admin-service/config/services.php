@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'nestjs' => [
+        'sync_url' => env('NESTJS_SYNC_URL', 'http://api-gateway:3000/api/webhooks/sync'),
+        'sync_key' => env('SYNC_KEY'),
+    ],
+
 ];
