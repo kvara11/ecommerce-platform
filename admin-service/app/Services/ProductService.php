@@ -60,6 +60,7 @@ class ProductService
 
         $product = Product::create($payload);
 
+
         // Handle image upload
         if (!empty($data['image'])) {
             $this->uploadImage($product, $data['image']);
@@ -152,23 +153,28 @@ class ProductService
     }
 
 
-    private function uploadImage(Product $product, $imageFile): ProductImage
+    private function uploadImage(Product $product, $imageFile): void
     {
         $path = Storage::disk('public')->putFile('products', $imageFile);
+        $hasImg = $product->images()->exists();
 
-        return ProductImage::create([
+        ProductImage::create([
             'product_id' => $product->id,
-            'image_path' => $path,
-            'alt_text' => $product->name,
-            'is_main' => !$product->images()->exists(),
+            'url' => $path,
+            'is_main' => !$hasImg,
+            // 'sort_order' => $hasImg ? ($product->images()->max('sort_order') + 1) : 0,
         ]);
-    }
+
+        return; 
+    }   
 
 
     private function deleteImage(ProductImage $image): void
     {
-        if (Storage::disk('public')->exists($image->image_path)) {
-            Storage::disk('public')->delete($image->image_path);
+        $imagePath = $image->url ?? $image->image_path ?? null;
+
+        if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+            Storage::disk('public')->delete($imagePath);
         }
 
         $image->delete();
@@ -189,9 +195,15 @@ class ProductService
 
     public function getImageUrl(Product $product): ?string
     {
-        $primaryImage = $product->images()->where('is_main', true)->first();
-        if ($primaryImage) {
-            return Storage::disk('public')->url($primaryImage->image_path);
+        $primaryImage = $product->images->firstWhere('is_main', true);
+        $imagePath = $primaryImage?->url ?? $primaryImage?->image_path;
+
+        if(str_contains($imagePath, 'http')) {
+            return $imagePath;
+        }
+        
+        if ($imagePath) {
+            return Storage::url($imagePath);
         }
 
         return null;

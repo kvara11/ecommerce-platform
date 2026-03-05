@@ -52,6 +52,7 @@
                                         :alt="product.name"
                                         class="w-12 h-12 object-cover rounded"
                                     />
+
                                     <div v-else class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
                                         <span class="text-gray-400 text-xs">No image</span>
                                     </div>
@@ -432,6 +433,9 @@ const productsList = computed(() => {
     if (Array.isArray(props.products?.data)) return props.products.data;
     return [];
 });
+
+console.log(props.products);
+
 
 const currentPage = computed(() => props.products?.meta?.current_page ?? 1);
 const total = computed(() => props.products?.meta?.total ?? productsList.value.length);
