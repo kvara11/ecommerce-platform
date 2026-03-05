@@ -5,19 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-/**
- * CreateRefreshTokensTable Migration
- * 
- * Run: php artisan migrate
- * 
- * Creates the refresh_tokens table used by NestJS API Gateway.
- * Stores bcrypt-hashed refresh tokens linked to users.
- * 
- * Both NestJS and Laravel can access this table to:
- * - Verify refresh tokens
- * - Revoke/invalidate tokens
- * - Clean up expired tokens
- */
 return new class extends Migration
 {
     /**
@@ -25,7 +12,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Enable UUID extension for PostgreSQL
         DB::statement('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
         
         Schema::create('refresh_tokens', function (Blueprint $table) {
