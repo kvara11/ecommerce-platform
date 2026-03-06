@@ -599,6 +599,8 @@ Services:
 └── redis (Redis 7)             # Cache, sessions, queues
 ```
 
+docker-compose.override.yml - for development environment
+
 #### Nginx Routing Rules
 
 ```
