@@ -74,51 +74,6 @@ Once containers are running:
 #### Hot Reload Frontend Assets
 For Vue/CSS changes in admin-service:
 
-```bash
-# Terminal 1: Watch mode for Vite
-docker exec -it ecommerce_admin_service npm run devRewrite this README.md to sound more natural and human-written.
-
-Important requirements:
-
-1. Keep all technical information and structure, but improve the tone so it sounds like it was written by a developer documenting their own project, not generated documentation.
-
-2. The tone should be:
-   - professional but natural
-   - slightly conversational
-   - clear and easy to read
-   - not overly formal or robotic
-
-3. Do NOT remove important technical sections like:
-   - Setup Instructions
-   - API Documentation
-   - Architecture
-   - Design Decisions
-   - Docker setup
-   - Environment variables
-
-4. Improve readability:
-   - shorten overly long explanations
-   - remove repetitive phrases
-   - simplify overly formal language
-   - keep code blocks unchanged
-
-5. Add small human touches where appropriate, for example:
-   - short explanations of why certain decisions were made
-   - notes about trade-offs or time constraints
-   - developer tips for running the project
-
-6. Keep markdown formatting clean and simple.
-
-7. Do NOT make the document too long. Prefer clarity over excessive detail.
-
-8. This project was built as a backend technical assessment in about one week, so the README should reflect that context.
-
-Output the full improved README.md.
-
-# Terminal 2: In another terminal, rebuild on file changes
-docker compose up -d --build
-```
-
 #### Build Frontend Assets
 Deploy static assets (production-ready):
 
