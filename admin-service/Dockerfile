@@ -42,8 +42,6 @@ RUN npm install && \
     npm run build && \
     rm -rf node_modules
 
-RUN mkdir -p storage bootstrap/cache && \
-    chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 9000
 CMD ["/entrypoint.sh"]

@@ -9,6 +9,9 @@ services:
     volumes:
       - ./admin-service:/var/www/admin-service
       - admin-build:/var/www/admin-service/public/build
+    command: >
+      sh -c "/entrypoint.sh &
+             npm run dev"
 
   api-gateway:
     build:
