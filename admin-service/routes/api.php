@@ -2,7 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\TokenController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/token/generate', [TokenController::class, 'generate']);
+    Route::post('/token/revoke-all', [TokenController::class, 'revokeAll']);
+    Route::get('/tokens', [TokenController::class, 'list']);
+});
+
