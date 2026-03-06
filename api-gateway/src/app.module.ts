@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
-import { createKeyv } from '@keyv/redis';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { cacheConfig } from './config/cache.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -21,17 +21,7 @@ import { AutoRefreshJwtInterceptor } from './common/interceptors/auto-refresh-jw
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    CacheModule.registerAsync({
-      isGlobal: true,
-      useFactory: () => ({
-        ttl: Number(process.env.CACHE_TTL_SECONDS ?? 600) * 1000,
-        stores: [
-          createKeyv(
-            `redis://${process.env.REDIS_HOST ?? 'localhost'}:${Number(process.env.REDIS_PORT ?? 6379)}`,
-          ),
-        ],
-      }),
-    }),
+    CacheModule.registerAsync(cacheConfig),
 
     TypeOrmModule.forRoot({
       type: 'postgres',

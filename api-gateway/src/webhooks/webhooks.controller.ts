@@ -5,7 +5,7 @@ import type { Cache } from 'cache-manager';
 import { ProductService } from '../products/products.service';
 
 interface SyncProductDto {
-    action: 'saved' | 'deleted' | 'updated';
+    action: 'saved' | 'deleted';
     product: {
         id: number;
         category_id: number;
@@ -53,7 +53,7 @@ export class WebhooksController {
                 console.log(`[WebhookSync] Updated product ${product.id} in cache`);
             }
 
-            await this.productService.invalidateListCaches();
+            await this.productService.invalidateProductListCaches();
 
 
             return {
