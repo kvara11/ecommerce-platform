@@ -18,16 +18,22 @@ class CategoriesViewController extends Controller
         $this->categoryService = $categoryService;
     }
 
-    /**
-     * Display a listing of categories.
-     */
     public function index(Request $request)
     {
         $filters = $request->only(['search', 'is_active']);
-        $categories = $this->categoryService->paginate($filters, perPage: 15);
+        
+        $allCategories = Category::with(['parent', 'children'])
+            ->when(isset($filters['search']), function ($query) use ($filters) {
+                $query->where('name', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            })
+            ->when(isset($filters['is_active']), function ($query) use ($filters) {
+                $query->where('is_active', $filters['is_active']);
+            })
+            ->orderBy('sort_order')
+            ->get();
 
-        // Transform categories for Vue component
-        $categoriesData = $categories->map(function ($category) {
+        $transformCategory = function ($category) use (&$transformCategory) {
             return [
                 'id' => $category->id,
                 'name' => $category->name,
@@ -37,26 +43,29 @@ class CategoriesViewController extends Controller
                 'sort_order' => $category->sort_order,
                 'status' => $category->is_active ? 'active' : 'inactive',
                 'is_active' => $category->is_active,
+                'parent_id' => $category->parent_id,
                 'parent' => $category->parent ? [
                     'id' => $category->parent->id,
                     'name' => $category->parent->name,
                 ] : null,
-                'children_count' => $category->children()->count(),
+                'children' => $category->children->map($transformCategory)->toArray(),
+                'children_count' => $category->children->count(),
                 'products_count' => $category->products()->count(),
             ];
-        });
+        };
 
-        // Get root categories for parent selection
+        $categoriesData = $allCategories->map($transformCategory);
+
         $parentCategories = $this->categoryService->getRootCategories();
 
         return Inertia::render('Categories/Index', [
             'categories' => [
                 'data' => $categoriesData,
                 'meta' => [
-                    'current_page' => $categories->currentPage(),
-                    'per_page' => $categories->perPage(),
-                    'total' => $categories->total(),
-                    'last_page' => $categories->lastPage(),
+                    'current_page' => 1,
+                    'per_page' => $categoriesData->count(),
+                    'total' => $categoriesData->count(),
+                    'last_page' => 1,
                 ],
             ],
             'parentCategories' => $parentCategories,
@@ -64,9 +73,6 @@ class CategoriesViewController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created category.
-     */
     public function store(StoreCategoryRequest $request)
     {
         try {
@@ -78,9 +84,7 @@ class CategoriesViewController extends Controller
         }
     }
 
-    /**
-     * Update the specified category.
-     */
+
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         try {
@@ -92,9 +96,7 @@ class CategoriesViewController extends Controller
         }
     }
 
-    /**
-     * Delete the specified category.
-     */
+
     public function destroy(Category $category)
     {
         try {
@@ -106,9 +108,6 @@ class CategoriesViewController extends Controller
         }
     }
 
-    /**
-     * Toggle category status.
-     */
     public function toggleStatus(Category $category)
     {
         try {

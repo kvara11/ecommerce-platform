@@ -35,65 +35,88 @@
                         <thead class="bg-gray-100 border-b">
                             <tr>
                                 <th class="px-6 py-3 text-left">Image</th>
-                                <th class="px-6 py-3 text-left">Name</th>
-                                <th class="px-6 py-3 text-left">Parent</th>
-                                <th class="px-6 py-3 text-left">Children</th>
+                                <th class="px-6 py-3 text-left">Category</th>
                                 <th class="px-6 py-3 text-left">Products</th>
                                 <th class="px-6 py-3 text-left">Status</th>
                                 <th class="px-6 py-3 text-left">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="category in categoriesList" :key="category.id" class="border-b hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <img
-                                        v-if="category.image_url"
-                                        :src="category.image_url"
-                                        :alt="category.name"
-                                        class="w-12 h-12 object-cover rounded"
+                            <template v-for="category in categoryTree" :key="category.id">
+                                <tr class="border-b hover:bg-gray-50">
+                                    <td class="px-6 py-4">
+                                        <img
+                                            v-if="category.image_url"
+                                            :src="category.image_url"
+                                            :alt="category.name"
+                                            class="w-12 h-12 object-cover rounded"
+                                        />
+                                        <div v-else class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                                            <span class="text-gray-400 text-xs">No image</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <button
+                                                v-if="category.children && category.children.length > 0"
+                                                @click="toggleExpand(category.id)"
+                                                :class="[
+                                                    'w-6 h-6 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-all',
+                                                    expandedCategories.includes(category.id) ? 'rotate-90' : ''
+                                                ]"
+                                            >
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                            <span v-else class="w-6"></span>
+                                            <span class="font-semibold" :style="{ paddingLeft: category.level * 20 + 'px' }">
+                                                {{ category.name }}
+                                            </span>
+                                            <span v-if="category.children && category.children.length > 0" class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                                                {{ category.children.length }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                                            {{ category.products_count }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            :class="[
+                                                'px-3 py-1 rounded-full text-sm',
+                                                category.is_active
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-red-100 text-red-800'
+                                            ]"
+                                        >
+                                            {{ category.is_active ? 'Active' : 'Inactive' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <button
+                                            @click="openModal(category)"
+                                            class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Render children recursively -->
+                                <template v-if="expandedCategories.includes(category.id) && category.children">
+                                    <CategoryRow
+                                        v-for="child in category.children"
+                                        :key="child.id"
+                                        :category="child"
+                                        :expanded="expandedCategories"
+                                        @toggle="toggleExpand"
+                                        @open-modal="openModal"
                                     />
-                                    <div v-else class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
-                                        <span class="text-gray-400 text-xs">No image</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 font-semibold">{{ category.name }}</td>
-                                <td class="px-6 py-4">
-                                    <span v-if="category.parent" class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                                        {{ category.parent.name }}
-                                    </span>
-                                    <span v-else class="text-gray-500 text-sm">Root</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                        {{ category.children_count }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                        {{ category.products_count }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span
-                                        :class="[
-                                            'px-3 py-1 rounded-full text-sm',
-                                            category.is_active
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-red-100 text-red-800'
-                                        ]"
-                                    >
-                                        {{ category.is_active ? 'Active' : 'Inactive' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <button
-                                        @click="openModal(category)"
-                                        class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                                    >
-                                        View
-                                    </button>
-                                </td>
-                            </tr>
+                                </template>
+                            </template>
                         </tbody>
                     </table>
                 </div>
@@ -335,6 +358,7 @@
 
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import CategoryRow from '@/Components/CategoryRow.vue';
 import { router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -361,6 +385,7 @@ const showCreateModal = ref(false);
 const isCreating = ref(false);
 const imagePreview = ref('');
 const editImageFile = ref(null);
+const expandedCategories = ref([]);
 
 const editForm = ref({
     name: '',
@@ -406,6 +431,69 @@ const pageNumbers = computed(() => {
     }
     return pages;
 });
+
+// Build tree structure from flat list
+const categoryTree = computed(() => {
+    const categories = categoriesList.value || [];
+    const categoryMap = new Map();
+    
+    // First pass: create map with level info
+    categories.forEach(cat => {
+        categoryMap.set(cat.id, {
+            ...cat,
+            level: 0,
+            children: [],
+        });
+    });
+    
+    // Second pass: build parent-child relationships
+    const roots = [];
+    categories.forEach(cat => {
+        const mapCat = categoryMap.get(cat.id);
+        if (cat.parent_id) {
+            const parent = categoryMap.get(cat.parent_id);
+            if (parent) {
+                mapCat.level = parent.level + 1;
+                parent.children.push(mapCat);
+            } else {
+                roots.push(mapCat);
+            }
+        } else {
+            roots.push(mapCat);
+        }
+    });
+    
+    // Sort by sort_order
+    const sortByOrder = (cats) => {
+        return cats.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    };
+    
+    roots.forEach(root => {
+        const sortChildren = (children) => {
+            sortByOrder(children).forEach(child => {
+                if (child.children.length > 0) {
+                    sortChildren(child.children);
+                }
+            });
+        };
+        if (root.children.length > 0) {
+            sortChildren(root.children);
+        }
+    });
+    
+    const result = sortByOrder(roots);
+    console.log('Category Tree:', result);
+    return result;
+});
+
+const toggleExpand = (categoryId) => {
+    const index = expandedCategories.value.indexOf(categoryId);
+    if (index > -1) {
+        expandedCategories.value.splice(index, 1);
+    } else {
+        expandedCategories.value.push(categoryId);
+    }
+};
 
 const goToPage = (page) => {
     if (page < 1 || page > lastPage.value) return;
