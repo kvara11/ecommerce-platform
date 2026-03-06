@@ -1,7 +1,17 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  JoinColumn,
+} from 'typeorm';
+import { OrderItemEntity } from './order-item.entity';
 
 @Entity({ name: 'orders' })
 export class OrderEntity {
+  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,11 +21,12 @@ export class OrderEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total_amount: number;
 
-  @Column({ type: 'jsonb' })
-  items: Array<{ productId: number; quantity: number }>;
+  @Column({ type: 'int'})
+  status_id: number;
 
-  @Column({ type: 'varchar', length: 50, default: 'created' })
-  status: string;
+  @OneToMany(() => OrderItemEntity, (item) => item.order, { eager: true })
+  @JoinColumn({ name: 'order_id' })
+  items: OrderItemEntity[];
 
   @CreateDateColumn()
   created_at: Date;

@@ -14,6 +14,7 @@ import { OrdersModule } from './orders/orders.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { ProductEntity } from './products/entities/product.entity';
 import { OrderEntity } from './orders/entities/order.entity';
+import { OrderItemEntity } from './orders/entities/order-item.entity';
 import { RoleEntity } from './users/entities/role.entity';
 import { UserEntity } from './users/entities/user.entity';
 import { AutoRefreshJwtInterceptor } from './common/interceptors/auto-refresh-jwt.interceptor';
@@ -36,6 +37,7 @@ import { AutoRefreshJwtInterceptor } from './common/interceptors/auto-refresh-jw
         RefreshTokenEntity,
         ProductEntity,
         OrderEntity,
+        OrderItemEntity,
       ],
       synchronize: false,
     }),
