@@ -36,8 +36,6 @@ export class OrdersService {
 
     query.orderBy('order.created_at', 'DESC').skip(skip).take(limit);
 
-    console.log(query.getSql());
-    
     const [data, total] = await query.getManyAndCount();
 
     return {
